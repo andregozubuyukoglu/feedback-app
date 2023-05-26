@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react"
+import RatingSelect from "./RatingSelect"
 import Card from "./shared/Card"
 import Button from "./shared/Button"
-import RatingSelect from "./RatingSelect"
 import FeedbackContext from "../context/FeedbackContext"
 
 function FeedbackForm() {
@@ -21,19 +21,21 @@ function FeedbackForm() {
     }
   }, [feedbackEdit])
 
-  const handleTextChange = (e) => {
-    if (text === "") {
+  // prettier-ignore
+  const handleTextChange = ({ target: { value } }) => { // 👈  get the value
+    if (value === '') {
       setBtnDisabled(true)
       setMessage(null)
-    } else if (text !== "" && text.trim().length <= 10) {
+      
+  // prettier-ignore
+    } else if (value.trim().length < 10) { // 👈 check for less than 10
+      setMessage('Text must be at least 10 characters')
       setBtnDisabled(true)
-      setMessage("Text must be at least 10 characters")
     } else {
       setMessage(null)
       setBtnDisabled(false)
     }
-
-    setText(e.target.value)
+    setText(value)
   }
 
   const handleSubmit = (e) => {
@@ -50,6 +52,8 @@ function FeedbackForm() {
         addFeedback(newFeedback)
       }
 
+      setBtnDisabled(true)
+      setRating(10)
       setText("")
     }
   }
@@ -57,8 +61,8 @@ function FeedbackForm() {
   return (
     <Card>
       <form onSubmit={handleSubmit}>
-        <h2>How would you rate services with us ?</h2>
-        <RatingSelect select={(rating) => setRating(rating)} />
+        <h2>How would you rate your service with us?</h2>
+        <RatingSelect select={setRating} selected={rating} />
         <div className="input-group">
           <input
             onChange={handleTextChange}
